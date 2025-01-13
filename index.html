@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .converter {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        select, input, button {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            select, input, button {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Unit Converter</h1>
+        <div class="converter">
+            <select id="category">
+                <option value="length">Length</option>
+                <option value="area">Area</option>
+                <option value="time">Time</option>
+            </select>
+            <select id="fromUnit"></select>
+            <input type="number" id="fromValue" placeholder="Enter value">
+            <select id="toUnit"></select>
+            <button onclick="convert()">Convert</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const units = {
+            length: ['Meter', 'Kilometer', 'Centimeter', 'Millimeter', 'Mile', 'Yard', 'Foot', 'Inch'],
+            area: ['Square Meter', 'Square Kilometer', 'Square Centimeter', 'Square Millimeter', 'Hectare', 'Acre', 'Square Mile', 'Square Yard', 'Square Foot', 'Square Inch'],
+            time: ['Second', 'Minute', 'Hour', 'Day', 'Week', 'Month', 'Year']
+        };
+
+        const conversionFactors = {
+            length: {
+                Meter: 1,
+                Kilometer: 0.001,
+                Centimeter: 100,
+                Millimeter: 1000,
+                Mile: 0.000621371,
+                Yard: 1.09361,
+                Foot: 3.28084,
+                Inch: 39.3701
+            },
+            area: {
+                'Square Meter': 1,
+                'Square Kilometer': 0.000001,
+                'Square Centimeter': 10000,
+                'Square Millimeter': 1000000,
+                Hectare: 0.0001,
+                Acre: 0.000247105,
+                'Square Mile': 3.86102e-7,
+                'Square Yard': 1.19599,
+                'Square Foot': 10.7639,
+                'Square Inch': 1550
+            },
+            time: {
+                Second: 1,
+                Minute: 1/60,
+                Hour: 1/3600,
+                Day: 1/86400,
+                Week: 1/604800,
+                Month: 1/2592000,
+                Year: 1/31536000
+            }
+        };
+
+        const categorySelect = document.getElementById('category');
+        const fromUnitSelect = document.getElementById('fromUnit');
+        const toUnitSelect = document.getElementById('toUnit');
+
+        function populateUnits() {
+            const category = categorySelect.value;
+            fromUnitSelect.innerHTML = '';
+            toUnitSelect.innerHTML = '';
+            units[category].forEach(unit => {
+                fromUnitSelect.innerHTML += `<option value="${unit}">${unit}</option>`;
+                toUnitSelect.innerHTML += `<option value="${unit}">${unit}</option>`;
+            });
+        }
+
+        categorySelect.addEventListener('change', populateUnits);
+        populateUnits();
+
+        function convert() {
+            const category = categorySelect.value;
+            const fromUnit = fromUnitSelect.value;
+            const toUnit = toUnitSelect.value;
+            const fromValue = parseFloat(document.getElementById('fromValue').value);
+
+            if (isNaN(fromValue)) {
+                alert('Please enter a valid number');
+                return;
+            }
+
+            const baseValue = fromValue / conversionFactors[category][fromUnit];
+            const result = baseValue * conversionFactors[category][toUnit];
+
+            document.getElementById('result').innerText = `${fromValue} ${fromUnit} = ${result.toFixed(6)} ${toUnit}`;
+        }
+    </script>
+</body>
+</html>
